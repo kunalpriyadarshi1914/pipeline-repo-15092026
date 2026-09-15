@@ -1,43 +1,43 @@
 rgs = {
     rg1={
-        name="kp1-rg"
+        name="kp2-rg"
         location="centralindia"
     }
 }
 pip1 = {
     pip2={
-        name="kp-pip"
-        resource_group_name="kp-rg"
+        name="kp-pip1"
+        resource_group_name="kp2-rg"
         location="centralindia"
         
     }
 }
 vnets = {
     vnet1={
-        name="shiva-vnet"
-        resource_group_name="kp-rg"
+        name="shiva-vnet1"
+        resource_group_name="kp2-rg"
         location="centralindia"
     }
 }
 subnets = {
     subnet1={
-        name="shiva-subnet"
-        resource_group_name="kp-rg"
-        virtual_network_name="shiva-vnet"
+        name="shiva-subnet1"
+        resource_group_name="kp2-rg"
+        virtual_network_name="shiva-vnet1"
 
     }
 }
 nics = {
     nic5={
-        name="shiva-nic"
+        name="shiva-nic1"
         location="centralindia"
-        resource_group_name="kp-rg"
+        resource_group_name="kp2-rg"
     }
 }
 vms = {
     vm5={
-        name="shiva-vm"
-        resource_group_name="kp-rg"
+        name="shiva-vm1"
+        resource_group_name="kp2-rg"
         location="centralindia"
         admin_username="Shiva_devops1914"
         admin_password="komalkunal@1914"
