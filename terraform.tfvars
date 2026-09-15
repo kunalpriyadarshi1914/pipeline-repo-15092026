@@ -1,6 +1,6 @@
 rgs = {
     rg1={
-        name="kp-rg"
+        name="kp1-rg"
         location="centralindia"
     }
 }
