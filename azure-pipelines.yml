@@ -1,20 +1,38 @@
-trigger: none
+```yaml
+trigger:
+- main
+- feature/*
+
 pool: ps-pool
 
 stages:
+
+##########################################
+# TERRAFORM INSTALLATION
+##########################################
+
   - stage: terraform_installation
     displayName: terraform-display
+
     jobs:
       - job: terraform_installation_job1
+
         steps:
           - task: TerraformInstaller@1
             inputs:
               terraformVersion: 'latest'
-##########################################terraform-init###############################
+
+
+##########################################
+# TERRAFORM INIT
+##########################################
+
   - stage: terraform_init
     displayName: terraform-init
+
     jobs:
       - job: terraform_init_job2
+
         steps:
           - task: TerraformTask@5
             inputs:
@@ -25,14 +43,22 @@ stages:
               backendAzureRmStorageAccountName: 'piplinestg1914'
               backendAzureRmContainerName: 'pipeline-container'
               backendAzureRmKey: 'pipeline.tfstate'
-##########################################terraform-plan####################################
-  
+
+
+##########################################
+# TERRAFORM PLAN
+##########################################
+
   - stage: terraform_plan
     displayName: terraform-plan
+
     dependsOn: terraform_init
+
     jobs:
       - job: terraform_plan_job3
+
         steps:
+
           - task: TerraformTask@5
             inputs:
               provider: 'azurerm'
@@ -41,7 +67,7 @@ stages:
               backendServiceArm: 'pipeline-svc'
               backendAzureRmStorageAccountName: 'piplinestg1914'
               backendAzureRmContainerName: 'pipeline-container'
-              backendAzureRmKey: 'pipeline.tfstate' 
+              backendAzureRmKey: 'pipeline.tfstate'
 
           - task: TerraformTask@5
             inputs:
@@ -56,14 +82,28 @@ stages:
               targetPath: '$(System.DefaultWorkingDirectory)/tfplan'
               artifact: 'terraform-plan'
               publishLocation: 'pipeline'
-##################################terraform-apply################################
+
+
+##########################################
+# TERRAFORM APPLY
+##########################################
 
   - stage: terraform_apply
     displayName: terraform-apply
+
     dependsOn: terraform_plan
+
+    # APPLY ONLY ON MAIN
+    condition: and(
+      succeeded(),
+      eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    )
+
     jobs:
       - job: terraform_apply_job4
+
         steps:
+
           - task: TerraformTask@5
             inputs:
               provider: 'azurerm'
@@ -73,7 +113,7 @@ stages:
               backendAzureRmStorageAccountName: 'piplinestg1914'
               backendAzureRmContainerName: 'pipeline-container'
               backendAzureRmKey: 'pipeline.tfstate'
-        
+
           - task: DownloadPipelineArtifact@2
             inputs:
               artifactName: 'terraform-plan'
@@ -86,9 +126,4 @@ stages:
               workingDirectory: '$(System.DefaultWorkingDirectory)/'
               commandOptions: 'tfplan'
               environmentServiceNameAzureRM: 'pipeline-svc'
-
-           
-          
-
-  
-          
+```
