@@ -1,81 +1,56 @@
-```yaml
-trigger:
+trigger: 
 - main
 - feature/*
 
 pool: ps-pool
 
 stages:
-
-##########################################
-# TERRAFORM INSTALLATION
-##########################################
-
-  - stage: terraform_installation
-    displayName: terraform-display
-
+  - stage: terraform_install
+    displayName: terraform installation
     jobs:
-      - job: terraform_installation_job1
-
+      - job: terraform_job1
         steps:
           - task: TerraformInstaller@1
             inputs:
               terraformVersion: 'latest'
-
-
-##########################################
-# TERRAFORM INIT
-##########################################
-
+    
   - stage: terraform_init
-    displayName: terraform-init
-
+    displayName: terraform init
     jobs:
-      - job: terraform_init_job2
-
+      - job: terraform_job2
         steps:
           - task: TerraformTask@5
             inputs:
               provider: 'azurerm'
               command: 'init'
               workingDirectory: '$(System.DefaultWorkingDirectory)/'
-              backendServiceArm: 'pipeline-svc'
-              backendAzureRmStorageAccountName: 'piplinestg1914'
-              backendAzureRmContainerName: 'pipeline-container'
-              backendAzureRmKey: 'pipeline.tfstate'
-
-
-##########################################
-# TERRAFORM PLAN
-##########################################
+              backendServiceArm: 'my_svc'
+              backendAzureRmStorageAccountName: 'pipelinestg22092026'
+              backendAzureRmContainerName: 'pipelinecontainer22092026'
+              backendAzureRmKey: 'pipeline1.tfstate'
 
   - stage: terraform_plan
-    displayName: terraform-plan
-
+    displayName: terraform plan
     dependsOn: terraform_init
-
     jobs:
-      - job: terraform_plan_job3
-
+      - job: terraform_job3
         steps:
-
           - task: TerraformTask@5
             inputs:
               provider: 'azurerm'
               command: 'init'
               workingDirectory: '$(System.DefaultWorkingDirectory)/'
-              backendServiceArm: 'pipeline-svc'
-              backendAzureRmStorageAccountName: 'piplinestg1914'
-              backendAzureRmContainerName: 'pipeline-container'
-              backendAzureRmKey: 'pipeline.tfstate'
-
+              backendServiceArm: 'my_svc'
+              backendAzureRmStorageAccountName: 'pipelinestg22092026'
+              backendAzureRmContainerName: 'pipelinecontainer22092026'
+              backendAzureRmKey: 'pipeline1.tfstate'
           - task: TerraformTask@5
             inputs:
               provider: 'azurerm'
               command: 'plan'
               workingDirectory: '$(System.DefaultWorkingDirectory)/'
               commandOptions: '-out=tfplan'
-              environmentServiceNameAzureRM: 'pipeline-svc'
+              environmentServiceNameAzureRM: 'my_svc'
 
           - task: PublishPipelineArtifact@1
             inputs:
@@ -83,47 +58,33 @@ stages:
               artifact: 'terraform-plan'
               publishLocation: 'pipeline'
 
-
-##########################################
-# TERRAFORM APPLY
-##########################################
-
   - stage: terraform_apply
-    displayName: terraform-apply
-
+    displayName: terraform apply
     dependsOn: terraform_plan
-
-    # APPLY ONLY ON MAIN
-    condition: and(
-      succeeded(),
-      eq(variables['Build.SourceBranch'], 'refs/heads/main')
-    )
-
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     jobs:
-      - job: terraform_apply_job4
-
+      - job: terraform_job4
         steps:
-
           - task: TerraformTask@5
             inputs:
               provider: 'azurerm'
               command: 'init'
               workingDirectory: '$(System.DefaultWorkingDirectory)/'
-              backendServiceArm: 'pipeline-svc'
-              backendAzureRmStorageAccountName: 'piplinestg1914'
-              backendAzureRmContainerName: 'pipeline-container'
-              backendAzureRmKey: 'pipeline.tfstate'
-
+              backendServiceArm: 'my_svc'
+              backendAzureRmStorageAccountName: 'pipelinestg22092026'
+              backendAzureRmContainerName: 'pipelinecontainer22092026'
+              backendAzureRmKey: 'pipeline1.tfstate'
           - task: DownloadPipelineArtifact@2
             inputs:
-              artifactName: 'terraform-plan'
+              artifact: 'terraform-plan'
               targetPath: '$(System.DefaultWorkingDirectory)'
-
           - task: TerraformTask@5
             inputs:
               provider: 'azurerm'
               command: 'apply'
+              
               workingDirectory: '$(System.DefaultWorkingDirectory)/'
+              
               commandOptions: 'tfplan'
-              environmentServiceNameAzureRM: 'pipeline-svc'
-```
+              environmentServiceNameAzureRM: 'my_svc'
+
