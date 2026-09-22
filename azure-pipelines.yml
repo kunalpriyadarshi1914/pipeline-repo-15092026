@@ -24,7 +24,7 @@ stages:
               provider: 'azurerm'
               command: 'init'
               workingDirectory: '$(System.DefaultWorkingDirectory)/'
-              backendServiceArm: 'my_svc'
+              backendServiceArm: 'rg-svc'
               backendAzureRmStorageAccountName: 'pipelinestg22092026'
               backendAzureRmContainerName: 'pipelinecontainer22092026'
               backendAzureRmKey: 'pipeline1.tfstate'
@@ -40,7 +40,7 @@ stages:
               provider: 'azurerm'
               command: 'init'
               workingDirectory: '$(System.DefaultWorkingDirectory)/'
-              backendServiceArm: 'my_svc'
+              backendServiceArm: 'rg-svc'
               backendAzureRmStorageAccountName: 'pipelinestg22092026'
               backendAzureRmContainerName: 'pipelinecontainer22092026'
               backendAzureRmKey: 'pipeline1.tfstate'
@@ -50,7 +50,7 @@ stages:
               command: 'plan'
               workingDirectory: '$(System.DefaultWorkingDirectory)/'
               commandOptions: '-out=tfplan'
-              environmentServiceNameAzureRM: 'my_svc'
+              environmentServiceNameAzureRM: 'rg-svc'
 
           - task: PublishPipelineArtifact@1
             inputs:
@@ -70,7 +70,7 @@ stages:
               provider: 'azurerm'
               command: 'init'
               workingDirectory: '$(System.DefaultWorkingDirectory)/'
-              backendServiceArm: 'my_svc'
+              backendServiceArm: 'rg-svc'
               backendAzureRmStorageAccountName: 'pipelinestg22092026'
               backendAzureRmContainerName: 'pipelinecontainer22092026'
               backendAzureRmKey: 'pipeline1.tfstate'
@@ -86,5 +86,5 @@ stages:
               workingDirectory: '$(System.DefaultWorkingDirectory)/'
               
               commandOptions: 'tfplan'
-              environmentServiceNameAzureRM: 'my_svc'
+              environmentServiceNameAzureRM: 'rg-svc'
 
