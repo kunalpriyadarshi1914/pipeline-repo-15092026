@@ -1,5 +1,5 @@
 
-resource "azurerm_resource_group" "rgprac" {
+resource "azurerm_resource_group" "rgprac11" {
   for_each = var.rgs
   name     = each.value.name
   location = each.value.location
@@ -7,8 +7,8 @@ resource "azurerm_resource_group" "rgprac" {
 
 
 
-resource "azurerm_public_ip" "pipprac" {
-  depends_on = [ azurerm_resource_group.rgprac ]
+resource "azurerm_public_ip" "pipprac22" {
+  depends_on = [ azurerm_resource_group.rgprac11 ]
   for_each = var.pip1
   name                = each.value.name
   resource_group_name = each.value.resource_group_name
@@ -17,8 +17,8 @@ resource "azurerm_public_ip" "pipprac" {
 }
 
 
-resource "azurerm_virtual_network" "vnet1" {
-  depends_on = [ azurerm_resource_group.rgprac ]
+resource "azurerm_virtual_network" "vnet11" {
+  depends_on = [ azurerm_resource_group.rgprac11 ]
   for_each = var.vnets
   name                = each.value.name
   resource_group_name = each.value.resource_group_name
@@ -27,33 +27,33 @@ resource "azurerm_virtual_network" "vnet1" {
 }
 
 
-resource "azurerm_subnet" "subnet1" {
+resource "azurerm_subnet" "subnet22" {
   for_each = var.subnets
-  depends_on = [ azurerm_virtual_network.vnet1 ]
+  depends_on = [ azurerm_virtual_network.vnet11 ]
   name                 = each.value.name
   resource_group_name  = each.value.resource_group_name
   virtual_network_name = each.value.virtual_network_name
   address_prefixes     = ["10.0.2.0/24"]
 }
 
-resource "azurerm_network_interface" "nic1" {
+resource "azurerm_network_interface" "nic11" {
   for_each = var.nics
-  depends_on = [ azurerm_subnet.subnet1 ]
+  depends_on = [ azurerm_subnet.subnet22 ]
   name                = each.value.name
   location            = each.value.location
   resource_group_name = each.value.resource_group_name
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.subnet1["subnet1"].id
+    subnet_id                     = azurerm_subnet.subnet22["subnet1"].id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = azurerm_public_ip.pipprac["pip2"].id
+    public_ip_address_id = azurerm_public_ip.pipprac22["pip2"].id
   }
 }
 
 
-resource "azurerm_linux_virtual_machine" "vm1" {
-  depends_on = [ azurerm_network_interface.nic1 ]
+resource "azurerm_linux_virtual_machine" "vm11" {
+  depends_on = [ azurerm_network_interface.nic11 ]
   for_each = var.vms
   name                = each.value.name
   resource_group_name = each.value.resource_group_name
@@ -63,7 +63,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   admin_password = each.value.admin_password
   disable_password_authentication = false
   network_interface_ids = [
-    azurerm_network_interface.nic1["nic5"].id,
+    azurerm_network_interface.nic11["nic5"].id,
   ]
 
   os_disk {
